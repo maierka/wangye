@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "title": "六级题库（示例）",
+  "description": "示例题库：原创练习题，每题含小提示（hint）。你可以在【题库】页导出后批量编辑。",
+  "createdAt": "2026-05-15",
+  "questions": [
+    {
+      "id": "q-0001",
+      "type": "mcq",
+      "year": 2025,
+      "source": "original",
+      "tags": ["词汇", "高频"],
+      "prompt": "The new policy is expected to _______ innovation in small businesses.",
+      "options": [
+        {"key": "A", "text": "stimulate"},
+        {"key": "B", "text": "simulate"},
+        {"key": "C", "text": "stipulate"},
+        {"key": "D", "text": "speculate"}
+      ],
+      "answer": "A",
+      "hint": "看语义：政策“促进/激发”创新；注意 B simulate 是“模拟”，C stipulate 是“规定”。",
+      "explanation": "stimulate=encourage; simulate=imitate; stipulate=specify; speculate=guess."
+    },
+    {
+      "id": "q-0002",
+      "type": "mcq",
+      "year": 2025,
+      "source": "original",
+      "tags": ["语法", "从句"],
+      "prompt": "It was not until the deadline approached _______ everyone realized the urgency.",
+      "options": [
+        {"key": "A", "text": "when"},
+        {"key": "B", "text": "that"},
+        {"key": "C", "text": "which"},
+        {"key": "D", "text": "what"}
+      ],
+      "answer": "B",
+      "hint": "not until 句型强调结构：It is/was not until ... that ...",
+      "explanation": "强调句固定搭配：It was not until ... that ..."
+    },
+    {
+      "id": "q-0003",
+      "type": "mcq",
+      "year": 2025,
+      "source": "original",
+      "tags": ["阅读技巧", "转折"],
+      "prompt": "Many people assume remote work increases productivity; _______, the outcome depends heavily on management.",
+      "options": [
+        {"key": "A", "text": "therefore"},
+        {"key": "B", "text": "however"},
+        {"key": "C", "text": "otherwise"},
+        {"key": "D", "text": "meanwhile"}
+      ],
+      "answer": "B",
+      "hint": "前后语义转折：不是简单因果或并列，选表示“然而”的连接词。",
+      "explanation": "however 表示转折；therefore 因果；meanwhile 同时；otherwise 否则。"
+    },
+    {
+      "id": "q-0004",
+      "type": "translation",
+      "year": 2025,
+      "source": "original",
+      "tags": ["翻译", "句型"],
+      "prompt": "将下面句子译成英文：\n“随着人工智能的发展，终身学习已成为提升竞争力的重要方式。”",
+      "hint": "提示：with the development of... / lifelong learning / a key way to enhance competitiveness。",
+      "answer": "With the development of artificial intelligence, lifelong learning has become an important way to enhance one’s competitiveness.",
+      "explanation": "注意“随着”常用 With...；“提升竞争力”可译为 enhance competitiveness。"
+    },
+    {
+      "id": "q-0005",
+      "type": "writing",
+      "year": 2025,
+      "source": "original",
+      "tags": ["写作", "议论文"],
+      "prompt": "写作：Some people prefer working from home, while others prefer working in the office. Which do you prefer and why? (120–180 words)",
+      "hint": "提示：三段式（观点-理由-总结）；至少给出 2 个理由，并用 however/therefore 等衔接。",
+      "answer": "I prefer working in the office because face-to-face communication reduces misunderstandings and helps teams coordinate quickly. In addition, a stable work environment keeps me focused and separates work from personal life. However, remote work is convenient when tasks require deep concentration. Overall, as long as companies offer flexibility, employees can choose the option that maximizes both efficiency and well-being.",
+      "explanation": "可替换成你真实偏好；注意论点明确、理由可量化、结尾总结升华。"
+    },
+    {
+      "id": "q-0006",
+      "type": "mcq",
+      "year": 2025,
+      "source": "original",
+      "tags": ["词汇", "搭配"],
+      "prompt": "The company decided to _______ the outdated system and adopt a new platform.",
+      "options": [
+        {"key": "A", "text": "phase out"},
+        {"key": "B", "text": "lay out"},
+        {"key": "C", "text": "put out"},
+        {"key": "D", "text": "hand out"}
+      ],
+      "answer": "A",
+      "hint": "短语辨析：phase out=逐步淘汰；lay out=布置；put out=扑灭/出版；hand out=分发。",
+      "explanation": "phase out 符合“淘汰旧系统”的语义。"
+    }
+  ]
+}
+
