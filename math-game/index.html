@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>数学冒险岛 - 1-6年级数学游戏</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1 class="app-title">数学冒险岛</h1>
+      <div class="header-stats">
+        <span class="stat-item">⭐ 总积分: <span id="total-score">0</span></span>
+        <span class="stat-item">🏆 最高连击: <span id="max-streak">0</span></span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- 年级选择界面 -->
+      <section id="grade-selection" class="screen active">
+        <h2 class="screen-title">选择年级</h2>
+        <div class="grade-grid">
+          <button class="grade-card" data-grade="1">
+            <span class="grade-icon">1️⃣</span>
+            <span class="grade-name">一年级</span>
+            <span class="grade-desc">10以内加减法</span>
+            <div class="grade-stars" data-grade="1"></div>
+          </button>
+          <button class="grade-card" data-grade="2">
+            <span class="grade-icon">2️⃣</span>
+            <span class="grade-name">二年级</span>
+            <span class="grade-desc">100以内加减法</span>
+            <div class="grade-stars" data-grade="2"></div>
+          </button>
+          <button class="grade-card" data-grade="3">
+            <span class="grade-icon">3️⃣</span>
+            <span class="grade-name">三年级</span>
+            <span class="grade-desc">乘法口诀+除法</span>
+            <div class="grade-stars" data-grade="3"></div>
+          </button>
+          <button class="grade-card" data-grade="4">
+            <span class="grade-icon">4️⃣</span>
+            <span class="grade-name">四年级</span>
+            <span class="grade-desc">多位数运算</span>
+            <div class="grade-stars" data-grade="4"></div>
+          </button>
+          <button class="grade-card" data-grade="5">
+            <span class="grade-icon">5️⃣</span>
+            <span class="grade-name">五年级</span>
+            <span class="grade-desc">大数运算</span>
+            <div class="grade-stars" data-grade="5"></div>
+          </button>
+          <button class="grade-card" data-grade="6">
+            <span class="grade-icon">6️⃣</span>
+            <span class="grade-name">六年级</span>
+            <span class="grade-desc">混合运算挑战</span>
+            <div class="grade-stars" data-grade="6"></div>
+          </button>
+        </div>
+      </section>
+
+      <!-- 模式选择界面 -->
+      <section id="mode-selection" class="screen">
+        <button class="back-btn" id="back-to-grades">← 返回年级选择</button>
+        <h2 class="screen-title">选择模式 - <span id="selected-grade-name"></span></h2>
+        <div class="mode-grid">
+          <button class="mode-card" data-mode="practice">
+            <span class="mode-icon">📝</span>
+            <span class="mode-name">练习模式</span>
+            <span class="mode-desc">无限练习，即时反馈</span>
+          </button>
+          <button class="mode-card" data-mode="challenge">
+            <span class="mode-icon">⚡</span>
+            <span class="mode-name">挑战模式</span>
+            <span class="mode-desc">10题计时，争分夺秒</span>
+          </button>
+          <button class="mode-card" data-mode="marathon">
+            <span class="mode-icon">🏃</span>
+            <span class="mode-name">马拉松模式</span>
+            <span class="mode-desc">20题挑战，坚持到底</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 游戏界面 -->
+      <section id="game-screen" class="screen">
+        <div class="game-header">
+          <button class="back-btn" id="back-from-game">← 退出游戏</button>
+          <div class="game-info">
+            <span class="mode-badge" id="game-mode-badge">练习模式</span>
+            <div class="timer-container" id="timer-container" style="display: none;">
+              <span class="timer-label">⏱️</span>
+              <span class="timer" id="timer">00:00</span>
+            </div>
+            <div class="progress-container" id="progress-container">
+              <span class="progress-text">进度: <span id="current-question">1</span>/<span id="total-questions">10</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-content">
+          <div class="score-display">
+            <span class="score-label">得分</span>
+            <span class="score-value" id="current-score">0</span>
+          </div>
+
+          <div class="streak-display" id="streak-display" style="display: none;">
+            🔥 <span id="streak-count">0</span> 连击!
+          </div>
+
+          <div class="question-container">
+            <div class="question-text" id="question-text">3 + 5 = ?</div>
+          </div>
+
+          <div class="answer-section">
+            <input type="number" id="answer-input" placeholder="输入答案..." autocomplete="off">
+            <button class="submit-btn" id="submit-btn">提交</button>
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+
+          <div class="keypad" id="keypad">
+            <button class="key" data-num="1">1</button>
+            <button class="key" data-num="2">2</button>
+            <button class="key" data-num="3">3</button>
+            <button class="key" data-num="4">4</button>
+            <button class="key" data-num="5">5</button>
+            <button class="key" data-num="6">6</button>
+            <button class="key" data-num="7">7</button>
+            <button class="key" data-num="8">8</button>
+            <button class="key" data-num="9">9</button>
+            <button class="key key-clear" data-action="clear">清除</button>
+            <button class="key" data-num="0">0</button>
+            <button class="key key-submit" id="keypad-submit">确认</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 结果界面 -->
+      <section id="result-screen" class="screen">
+        <h2 class="screen-title">🎉 挑战完成!</h2>
+        
+        <div class="result-card">
+          <div class="result-stars" id="result-stars"></div>
+          <div class="result-score">
+            <span class="result-label">最终得分</span>
+            <span class="result-value" id="result-score">0</span>
+          </div>
+          
+          <div class="result-stats">
+            <div class="stat-row">
+              <span class="stat-label">正确率</span>
+              <span class="stat-value" id="result-accuracy">0%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">正确题数</span>
+              <span class="stat-value" id="result-correct">0/0</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">最高连击</span>
+              <span class="stat-value" id="result-max-streak">0</span>
+            </div>
+            <div class="stat-row" id="result-time-row" style="display: none;">
+              <span class="stat-label">用时</span>
+              <span class="stat-value" id="result-time">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="action-btn primary" id="retry-btn">再来一次</button>
+          <button class="action-btn secondary" id="change-grade-btn">换年级</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>数学冒险岛 - 快乐学习，轻松成长!</p>
+    </footer>
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>
