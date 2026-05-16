@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.title }} - 校园AI交易市场{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+    <div class="breadcrumb">
+        <a href="/">首页</a> / <a href="/?category={{ product.category_id }}">{{ product.category_name }}</a> / {{ product.title }}
+    </div>
+
+    <div class="detail-card">
+        <div class="detail-main">
+            <div class="detail-image">
+                {% if product.image %}
+                <img src="{{ product.image }}" alt="{{ product.title }}">
+                {% else %}
+                {{ product.category_icon or '📦' }}
+                {% endif %}
+            </div>
+
+            <div class="detail-info">
+                <h1 class="detail-title">{{ product.title }}</h1>
+                <div class="detail-price">¥{{ "%.2f"|format(product.price) }}</div>
+
+                <div class="detail-meta">
+                    <div class="detail-meta-item">
+                        <div class="value">{{ product.view_count }}</div>
+                        <div class="label">浏览次数</div>
+                    </div>
+                    <div class="detail-meta-item">
+                        <div class="value">{{ product.category_name or '其他' }}</div>
+                        <div class="label">商品分类</div>
+                    </div>
+                </div>
+
+                <div class="detail-actions">
+                    <button class="btn btn-danger" onclick="toggleDetailFavorite()">
+                        {{ '❤️ 取消收藏' if is_favorited else '🤍 收藏' }}
+                    </button>
+                    {% if session.get('user_id') != product.seller_id %}
+                    <button class="btn btn-primary" onclick="toggleFollow()">
+                        {{ '✓ 已关注卖家' if is_following else '+ 关注卖家' }}
+                    </button>
+                    {% endif %}
+                </div>
+
+                <div class="seller-info">
+                    <div class="seller-avatar-lg">
+                        <a href="{{ url_for('profile', user_id=product.seller_id) }}" style="color: white; text-decoration: none;">
+                            👤
+                        </a>
+                    </div>
+                    <div class="seller-details">
+                        <h4>
+                            <a href="{{ url_for('profile', user_id=product.seller_id) }}">
+                                {{ product.seller_name }}
+                            </a>
+                        </h4>
+                        <p style="color: #999; font-size: 0.9rem;">卖家</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 2rem;">
+            <h3 style="margin-bottom: 1rem;">商品描述</h3>
+            <div style="color: #666; line-height: 1.8;">
+                {{ product.description or '暂无描述' }}
+            </div>
+        </div>
+    </div>
+
+    {% if seller_products %}
+    <div style="margin-top: 2rem;">
+        <h3 style="margin-bottom: 1rem;">该卖家的其他商品</h3>
+        <div class="products-grid">
+            {% for p in seller_products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if p.image %}
+                    <img src="{{ p.image }}" alt="{{ p.title }}">
+                    {% else %}
+                    {{ p.category_icon or '📦' }}
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <a href="{{ url_for('detail', product_id=p.id) }}" class="product-title">{{ p.title }}</a>
+                    <div class="product-price">¥{{ "%.2f"|format(p.price) }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+const productId = {{ product.id }};
+const sellerId = {{ product.seller_id }};
+let isFavorited = {{ 'true' if is_favorited else 'false' }};
+let isFollowing = {{ 'true' if is_following else 'false' }};
+
+async function toggleDetailFavorite() {
+    const method = isFavorited ? 'DELETE' : 'POST';
+    try {
+        const response = await fetch('/api/favorites' + (isFavorited ? '/' + productId : ''), {
+            method: method,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({product_id: productId})
+        });
+        const data = await response.json();
+        if (response.ok) {
+            isFavorited = !isFavorited;
+            location.reload();
+        } else if (response.status === 401) {
+            alert('请先登录');
+            window.location.href = '/login';
+        }
+    } catch (error) {
+        alert('操作失败');
+    }
+}
+
+async function toggleFollow() {
+    const method = isFollowing ? 'DELETE' : 'POST';
+    try {
+        const response = await fetch('/api/follow' + (isFollowing ? '/' + sellerId : ''), {
+            method: method,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({user_id: sellerId})
+        });
+        const data = await response.json();
+        if (response.ok) {
+            isFollowing = !isFollowing;
+            location.reload();
+        } else if (response.status === 401) {
+            alert('请先登录');
+            window.location.href = '/login';
+        }
+    } catch (error) {
+        alert('操作失败');
+    }
+}
+</script>
+{% endblock %}

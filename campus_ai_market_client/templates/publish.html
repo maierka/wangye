@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}发布商品 - 校园AI交易市场{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2 class="auth-title">发布商品</h2>
+        <div id="alertBox"></div>
+        <form id="publishForm">
+            <div class="form-group">
+                <label for="title">商品名称</label>
+                <input type="text" id="title" name="title" required placeholder="请输入商品名称">
+            </div>
+            <div class="form-group">
+                <label for="category_id">商品分类</label>
+                <select id="category_id" name="category_id" required>
+                    <option value="">请选择分类</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.icon }} {{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">价格（元）</label>
+                <input type="number" id="price" name="price" required min="0.01" step="0.01" placeholder="请输入价格">
+            </div>
+            <div class="form-group">
+                <label for="description">商品描述</label>
+                <textarea id="description" name="description" placeholder="请详细描述商品的品牌、型号、新旧程度等信息"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="image">商品图片URL（选填）</label>
+                <input type="url" id="image" name="image" placeholder="请输入图片链接">
+            </div>
+            <button type="submit" class="btn btn-success" style="width: 100%;">发布商品</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('publishForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = {
+        title: document.getElementById('title').value,
+        category_id: document.getElementById('category_id').value,
+        price: parseFloat(document.getElementById('price').value),
+        description: document.getElementById('description').value,
+        image: document.getElementById('image').value
+    };
+
+    if (!formData.title || !formData.category_id || !formData.price) {
+        showAlert('请填写完整的商品信息', 'error');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/products', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(formData)
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            showAlert('发布成功！', 'success');
+            setTimeout(() => window.location.href = '/', 1500);
+        } else {
+            showAlert(data.error || '发布失败', 'error');
+        }
+    } catch (error) {
+        showAlert('发布失败，请重试', 'error');
+    }
+});
+
+function showAlert(message, type) {
+    const alertBox = document.getElementById('alertBox');
+    alertBox.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+}
+</script>
+{% endblock %}

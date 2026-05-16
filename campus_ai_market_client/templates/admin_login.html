@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员登录 - 校园AI交易市场</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-title {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        .login-subtitle {
+            text-align: center;
+            color: #999;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1 class="login-title">🔐 管理员登录</h1>
+        <p class="login-subtitle">请输入管理员密码访问后台</p>
+
+        <div id="alertBox"></div>
+
+        <form id="adminLoginForm">
+            <div class="form-group">
+                <label for="code">管理员密码</label>
+                <input type="password" id="code" name="code" required placeholder="请输入管理员密码">
+            </div>
+            <button type="submit" class="btn-login">进入后台</button>
+        </form>
+
+        <a href="/" class="back-link">← 返回首页</a>
+    </div>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = document.getElementById('code').value;
+
+            try {
+                const response = await fetch('/api/admin_login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({code: code})
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('登录成功！正在跳转...', 'success');
+                    setTimeout(() => window.location.href = '/admin', 1000);
+                } else {
+                    showAlert(data.error, 'error');
+                }
+            } catch (error) {
+                showAlert('登录失败，请重试', 'error');
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.innerHTML = `<div class="alert alert-${type}" style="display: block;">${message}</div>`;
+        }
+    </script>
+</body>
+</html>

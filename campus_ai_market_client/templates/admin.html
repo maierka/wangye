@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 校园AI交易市场</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .admin-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .admin-header {
+            margin-bottom: 2rem;
+        }
+        .admin-header h1 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card p {
+            color: #999;
+            font-size: 1rem;
+        }
+        .stat-card.users { border-left: 4px solid #667eea; }
+        .stat-card.products { border-left: 4px solid #27ae60; }
+        .stat-card.favorites { border-left: 4px solid #e74c3c; }
+        .admin-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        .admin-section-header {
+            padding: 1rem 1.5rem;
+            background: #f9f9f9;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-section-header h2 {
+            font-size: 1.2rem;
+            color: #333;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .admin-table th {
+            background: #f9f9f9;
+            font-weight: 600;
+            color: #666;
+        }
+        .admin-table tr:hover {
+            background: #f9f9f9;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        .badge-available {
+            background: #e8f5e9;
+            color: #27ae60;
+        }
+        .badge-sold {
+            background: #fee;
+            color: #e74c3c;
+        }
+        .tab-container {
+            margin-bottom: 1rem;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover,
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="{{ url_for('index') }}" class="navbar-brand">
+                🏠 校园AI交易市场
+            </a>
+            <div class="navbar-nav">
+                <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                <a href="{{ url_for('publish') }}" class="nav-link">发布商品</a>
+                <a href="{{ url_for('my_favorites') }}" class="nav-link">我的收藏</a>
+                <a href="{{ url_for('admin') }}" class="nav-link" style="background: rgba(255,255,255,0.2);">📊 管理后台</a>
+            </div>
+            <div class="navbar-auth">
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('profile', user_id=session.get('user_id')) }}" class="nav-link">
+                        👤 {{ session.get('username') }}
+                    </a>
+                    <a href="#" class="btn btn-secondary" id="logoutBtn">退出</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-secondary">登录</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">注册</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>📊 管理后台</h1>
+            <p style="color: #999;">实时监控系统数据</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card users">
+                <h3>{{ user_count }}</h3>
+                <p>👥 注册用户</p>
+            </div>
+            <div class="stat-card products">
+                <h3>{{ product_count }}</h3>
+                <p>📦 商品数量</p>
+            </div>
+            <div class="stat-card favorites">
+                <h3>{{ favorite_count }}</h3>
+                <p>❤️ 收藏总数</p>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('users')">👥 用户列表</button>
+                <button class="tab-btn" onclick="showTab('products')">📦 商品列表</button>
+                <button class="tab-btn" onclick="showTab('favorites')">❤️ 收藏记录</button>
+            </div>
+
+            <div id="users" class="tab-content active">
+                <div class="admin-section">
+                    <div class="admin-section-header">
+                        <h2>用户列表</h2>
+                        <span style="color: #999;">共 {{ users|length }} 位用户</span>
+                    </div>
+                    {% if users %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户名</th>
+                                <th>邮箱</th>
+                                <th>手机号</th>
+                                <th>发布商品</th>
+                                <th>收藏数</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td><a href="{{ url_for('profile', user_id=user.id) }}">{{ user.username }}</a></td>
+                                <td>{{ user.email or '-' }}</td>
+                                <td>{{ user.phone or '-' }}</td>
+                                <td>{{ user.product_count }}</td>
+                                <td>{{ user.favorite_count }}</td>
+                                <td>{{ user.created_at }}</td>
+                                <td>
+                                    <a href="{{ url_for('profile', user_id=user.id) }}" class="btn btn-sm btn-primary">查看</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-message">暂无用户数据</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div id="products" class="tab-content">
+                <div class="admin-section">
+                    <div class="admin-section-header">
+                        <h2>商品列表</h2>
+                        <span style="color: #999;">共 {{ products|length }} 件商品</span>
+                    </div>
+                    {% if products %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>商品名称</th>
+                                <th>价格</th>
+                                <th>分类</th>
+                                <th>卖家</th>
+                                <th>状态</th>
+                                <th>发布时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td><a href="{{ url_for('detail', product_id=product.id) }}">{{ product.title }}</a></td>
+                                <td style="color: #e74c3c; font-weight: bold;">¥{{ "%.2f"|format(product.price) }}</td>
+                                <td>{{ product.category_name or '-' }}</td>
+                                <td><a href="{{ url_for('profile', user_id=product.seller_id) }}">{{ product.seller_name }}</a></td>
+                                <td><span class="badge badge-{{ product.status }}">{{ '在售' if product.status == 'available' else '已售' }}</span></td>
+                                <td>{{ product.created_at }}</td>
+                                <td>
+                                    <a href="{{ url_for('detail', product_id=product.id) }}" class="btn btn-sm btn-primary">查看</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-message">暂无商品数据</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div id="favorites" class="tab-content">
+                <div class="admin-section">
+                    <div class="admin-section-header">
+                        <h2>收藏记录</h2>
+                        <span style="color: #999;">最近 50 条记录</span>
+                    </div>
+                    {% if recent_favorites %}
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户</th>
+                                <th>商品</th>
+                                <th>价格</th>
+                                <th>收藏时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fav in recent_favorites %}
+                            <tr>
+                                <td>{{ fav.id }}</td>
+                                <td><a href="{{ url_for('profile', user_id=fav.user_id) if fav.user_name else '#' }}">{{ fav.user_name or '未知用户' }}</a></td>
+                                <td><a href="{{ url_for('detail', product_id=fav.product_id) if fav.product_title else '#' }}">{{ fav.product_title or '未知商品' }}</a></td>
+                                <td>{% if fav.price %}¥{{ "%.2f"|format(fav.price) }}{% else %}-{% endif %}</td>
+                                <td>{{ fav.created_at }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="empty-message">暂无收藏记录</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 校园AI交易市场 - 让校园二手交易更简单</p>
+    </footer>
+
+    <script>
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
+            e.preventDefault();
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                if (response.ok) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                window.location.href = '/';
+            }
+        });
+    </script>
+</body>
+</html>

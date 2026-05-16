@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 校园AI交易市场{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="search-bar">
+        <form action="{{ url_for('index') }}" method="GET">
+            <input type="text" name="keyword" placeholder="搜索商品名称或描述..." value="{{ keyword or '' }}">
+            <button type="submit" class="btn btn-primary">搜索</button>
+        </form>
+    </div>
+
+    <div class="categories-bar">
+        <a href="{{ url_for('index') }}" class="category-item {% if not current_category %}active{% endif %}">
+            全部
+        </a>
+        {% for category in categories %}
+        <a href="{{ url_for('index', category=category.id) }}"
+           class="category-item {% if current_category == category.id %}active{% endif %}">
+            {{ category.icon }} {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if products %}
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-image">
+                {% if product.image %}
+                <img src="{{ product.image }}" alt="{{ product.title }}">
+                {% else %}
+                {{ product.category_icon or '📦' }}
+                {% endif %}
+                <span class="product-badge">{{ product.category_name or '其他' }}</span>
+            </div>
+            <button class="product-favorite {% if product.id in favorites %}favorited{% endif %}"
+                    data-product-id="{{ product.id }}"
+                    onclick="toggleFavorite(this)">
+                {{ '❤️' if product.id in favorites else '🤍' }}
+            </button>
+            <div class="product-info">
+                <a href="{{ url_for('detail', product_id=product.id) }}" class="product-title">
+                    {{ product.title }}
+                </a>
+                <div class="product-price">¥{{ "%.2f"|format(product.price) }}</div>
+                <div class="product-meta">
+                    <div class="product-seller">
+                        <span>👤</span>
+                        <a href="{{ url_for('profile', user_id=product.seller_id) }}">
+                            {{ product.seller_name }}
+                        </a>
+                    </div>
+                    <span>👁️ {{ product.view_count }}</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📦</div>
+        <h3>暂无商品</h3>
+        <p>还没有商品，试试其他分类或发布商品吧！</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
