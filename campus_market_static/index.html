@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园AI交易市场</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .navbar-auth {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: transparent;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .product-price {
+            color: #e74c3c;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .product-category {
+            background: #f0f0f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 15px;
+        }
+
+        .empty-state h3 {
+            color: #999;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: #bbb;
+        }
+
+        .product-detail {
+            max-width: 800px;
+        }
+
+        .product-detail-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-detail-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .product-detail-price {
+            font-size: 2rem;
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        .product-detail-desc {
+            color: #666;
+            line-height: 1.6;
+            margin: 1rem 0;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .user-profile {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .profile-info h2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .profile-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .profile-stat-label {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.8rem 1.5rem;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .favorite-btn.favorited {
+            color: #e74c3c;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255,255,255,0.7);
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-nav {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-brand" onclick="showPage('home')">🏠 校园AI交易市场</a>
+            <div class="navbar-nav">
+                <a class="nav-link active" onclick="showPage('home')">首页</a>
+                <a class="nav-link" onclick="showPage('publish')">发布商品</a>
+                <a class="nav-link" onclick="showPage('favorites')">我的收藏</a>
+                <a class="nav-link" onclick="showPage('profile')">个人主页</a>
+            </div>
+            <div class="navbar-auth">
+                <span id="userDisplay"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div id="homePage" class="page active">
+        <div class="container">
+            <div class="hero">
+                <h1>🎓 校园AI交易市场</h1>
+                <p>发现校园好物，让闲置物品找到新主人</p>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索商品名称..." onkeyup="handleSearch(event)">
+                    <button class="btn btn-primary" onclick="searchProducts()">搜索</button>
+                </div>
+            </div>
+
+            <div class="filters" id="categoryFilters"></div>
+
+            <div id="productsContainer" class="products-grid"></div>
+        </div>
+    </div>
+
+    <div id="detailPage" class="page">
+        <div class="container">
+            <div class="modal-content product-detail" id="productDetail"></div>
+        </div>
+    </div>
+
+    <div id="publishPage" class="page">
+        <div class="container">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📦 发布商品</h2>
+                    <button class="modal-close" onclick="showPage('home')">&times;</button>
+                </div>
+                <div id="publishAlert"></div>
+                <form id="publishForm">
+                    <div class="form-group">
+                        <label>商品名称</label>
+                        <input type="text" id="productTitle" required placeholder="例如：二手教材《高等数学》">
+                    </div>
+                    <div class="form-group">
+                        <label>商品描述</label>
+                        <textarea id="productDesc" rows="4" placeholder="描述商品的详细信息、成色等"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>价格 (元)</label>
+                        <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="productCategory"></select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="showPage('home')">取消</button>
+                        <button type="submit" class="btn btn-primary">发布商品</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="favoritesPage" class="page">
+        <div class="container">
+            <h2 style="color: white; margin-bottom: 1.5rem;">❤️ 我的收藏</h2>
+            <div id="favoritesContainer" class="products-grid"></div>
+        </div>
+    </div>
+
+    <div id="profilePage" class="page">
+        <div class="container">
+            <div class="user-profile" id="userProfile"></div>
+            <h3 style="margin: 2rem 0 1rem;">📦 我的商品</h3>
+            <div id="userProducts" class="products-grid"></div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👤 登录</h2>
+                <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+            </div>
+            <div id="loginAlert"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="loginUsername" required placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" required placeholder="请输入密码">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('loginModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </div>
+                <p style="text-align: center; margin-top: 1rem; color: #999;">
+                    还没有账号？<a href="#" onclick="switchToRegister()" style="color: #667eea;">立即注册</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 注册</h2>
+                <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <div id="registerAlert"></div>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" id="regUsername" required placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="regPassword" required minlength="6" placeholder="至少6位密码">
+                </div>
+                <div class="form-group">
+                    <label>手机号</label>
+                    <input type="tel" id="regPhone" placeholder="选填">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('registerModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">注册</button>
+                </div>
+                <p style="text-align: center; margin-top: 1rem; color: #999;">
+                    已有账号？<a href="#" onclick="switchToLogin()" style="color: #667eea;">立即登录</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 校园AI交易市场 - 让校园二手交易更简单</p>
+    </footer>
+
+    <script>
+        const CATEGORIES = ['全部', '电子产品', '书籍教材', '生活用品', '服装鞋包', '运动健身', '美妆护肤', '其他'];
+
+        let currentUser = null;
+        let currentCategory = '全部';
+        let searchKeyword = '';
+
+        function init() {
+            loadCurrentUser();
+            renderCategoryFilters();
+            renderProducts();
+            setupForms();
+            checkAuth();
+        }
+
+        function getUsers() {
+            const users = localStorage.getItem('market_users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('market_users', JSON.stringify(users));
+        }
+
+        function getProducts() {
+            const products = localStorage.getItem('market_products');
+            if (products) return JSON.parse(products);
+
+            const sampleProducts = [
+                { id: 1, title: '高等数学教材 第七版', desc: '九成新，无笔记痕迹', price: 35, category: '书籍教材', sellerId: 1, sellerName: '张三', createdAt: '2024-01-15', views: 128 },
+                { id: 2, title: 'iPad Air 4 256G', desc: '蓝色，成色95新，带原装笔', price: 3200, category: '电子产品', sellerId: 2, sellerName: '李四', createdAt: '2024-01-14', views: 256 },
+                { id: 3, title: '小米台灯 全新未拆封', desc: '米家台灯1S，支持米家APP', price: 89, category: '电子产品', sellerId: 1, sellerName: '张三', createdAt: '2024-01-13', views: 64 },
+                { id: 4, title: 'Nike运动背包', desc: '黑色，30L容量，适合跑步', price: 120, category: '运动健身', sellerId: 3, sellerName: '王五', createdAt: '2024-01-12', views: 89 },
+                { id: 5, title: '心理学教材全套', desc: '包括普通心理学和实验心理学', price: 65, category: '书籍教材', sellerId: 2, sellerName: '李四', createdAt: '2024-01-11', views: 45 },
+                { id: 6, title: '电动滑板车', desc: '九号电动滑板车，续航30km', price: 1500, category: '其他', sellerId: 3, sellerName: '王五', createdAt: '2024-01-10', views: 312 }
+            ];
+            localStorage.setItem('market_products', JSON.stringify(sampleProducts));
+            return sampleProducts;
+        }
+
+        function saveProducts(products) {
+            localStorage.setItem('market_products', JSON.stringify(products));
+        }
+
+        function getFavorites() {
+            const favorites = localStorage.getItem('market_favorites');
+            return favorites ? JSON.parse(favorites) : [];
+        }
+
+        function saveFavorites(favorites) {
+            localStorage.setItem('market_favorites', JSON.stringify(favorites));
+        }
+
+        function getCurrentUser() {
+            const userId = localStorage.getItem('current_user_id');
+            if (!userId) return null;
+            const users = getUsers();
+            return users.find(u => u.id === parseInt(userId));
+        }
+
+        function loadCurrentUser() {
+            currentUser = getCurrentUser();
+            updateUserDisplay();
+        }
+
+        function updateUserDisplay() {
+            const userDisplay = document.getElementById('userDisplay');
+            if (currentUser) {
+                userDisplay.innerHTML = `
+                    <span style="margin-right: 1rem;">👤 ${currentUser.username}</span>
+                    <button class="btn btn-secondary" onclick="logout()">退出</button>
+                `;
+            } else {
+                userDisplay.innerHTML = `
+                    <button class="btn btn-secondary" onclick="openModal('loginModal')">登录</button>
+                    <button class="btn btn-primary" onclick="openModal('registerModal')">注册</button>
+                `;
+            }
+        }
+
+        function checkAuth() {
+            const requiresAuth = ['publish', 'favorites', 'profile'];
+            const currentPage = document.querySelector('.page.active')?.id;
+
+            if (requiresAuth.includes(currentPage) && !currentUser) {
+                showAlert('loginAlert', '请先登录后再操作', 'error');
+                setTimeout(() => openModal('loginModal'), 500);
+            }
+        }
+
+        function setupForms() {
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('publishForm').addEventListener('submit', handlePublish);
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            const users = getUsers();
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                localStorage.setItem('current_user_id', user.id);
+                currentUser = user;
+                updateUserDisplay();
+                closeModal('loginModal');
+                showAlert('loginAlert', '登录成功！', 'success');
+                document.getElementById('loginForm').reset();
+
+                const currentPage = document.querySelector('.page.active')?.id;
+                if (currentPage === 'publish' || currentPage === 'favorites') {
+                    showPage(currentPage);
+                }
+            } else {
+                showAlert('loginAlert', '用户名或密码错误', 'error');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const phone = document.getElementById('regPhone').value.trim();
+
+            const users = getUsers();
+
+            if (users.find(u => u.username === username)) {
+                showAlert('registerAlert', '用户名已存在', 'error');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                username,
+                password,
+                phone,
+                createdAt: new Date().toISOString().split('T')[0]
+            };
+
+            users.push(newUser);
+            saveUsers(users);
+
+            localStorage.setItem('current_user_id', newUser.id);
+            currentUser = newUser;
+            updateUserDisplay();
+            closeModal('registerModal');
+            showAlert('registerAlert', '注册成功！', 'success');
+            document.getElementById('registerForm').reset();
+        }
+
+        function logout() {
+            localStorage.removeItem('current_user_id');
+            currentUser = null;
+            updateUserDisplay();
+            showPage('home');
+        }
+
+        function handlePublish(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                openModal('loginModal');
+                return;
+            }
+
+            const title = document.getElementById('productTitle').value.trim();
+            const desc = document.getElementById('productDesc').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const category = document.getElementById('productCategory').value;
+
+            if (!title || !price) {
+                showAlert('publishAlert', '请填写完整信息', 'error');
+                return;
+            }
+
+            const products = getProducts();
+            const newProduct = {
+                id: Date.now(),
+                title,
+                desc: desc || '暂无描述',
+                price,
+                category,
+                sellerId: currentUser.id,
+                sellerName: currentUser.username,
+                createdAt: new Date().toISOString().split('T')[0],
+                views: 0
+            };
+
+            products.unshift(newProduct);
+            saveProducts(products);
+
+            document.getElementById('publishForm').reset();
+            showAlert('publishAlert', '发布成功！', 'success');
+
+            setTimeout(() => {
+                showPage('home');
+                renderProducts();
+            }, 1000);
+        }
+
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                searchProducts();
+            }
+        }
+
+        function searchProducts() {
+            searchKeyword = document.getElementById('searchInput').value.trim();
+            renderProducts();
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = CATEGORIES.map(cat => `
+                <button class="filter-btn ${cat === currentCategory ? 'active' : ''}"
+                        onclick="filterByCategory('${cat}')">${cat}</button>
+            `).join('');
+        }
+
+        function filterByCategory(category) {
+            currentCategory = category;
+            renderCategoryFilters();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            let products = getProducts();
+            const favorites = getFavorites();
+
+            if (currentCategory !== '全部') {
+                products = products.filter(p => p.category === currentCategory);
+            }
+
+            if (searchKeyword) {
+                products = products.filter(p =>
+                    p.title.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+                    p.desc.toLowerCase().includes(searchKeyword.toLowerCase())
+                );
+            }
+
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>🔍 没有找到商品</h3>
+                        <p>试试其他关键词或分类</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const favIds = favorites.map(f => f.productId);
+
+            container.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="product-image">📦</div>
+                    <div class="product-info">
+                        <h3 class="product-title">${p.title}</h3>
+                        <div class="product-price">¥${p.price.toFixed(2)}</div>
+                        <div class="product-meta">
+                            <span class="product-category">${p.category}</span>
+                            <span>👤 ${p.sellerName}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="showProductDetail(${p.id})">查看详情</button>
+                            <button class="favorite-btn ${favIds.includes(p.id) ? 'favorited' : ''}"
+                                    onclick="toggleFavorite(${p.id}, this)">
+                                ${favIds.includes(p.id) ? '❤️' : '🤍'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showProductDetail(productId) {
+            const products = getProducts();
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const favorites = getFavorites();
+            const isFavorited = favorites.some(f => f.productId === productId);
+            const isOwner = currentUser && currentUser.id === product.sellerId;
+
+            const container = document.getElementById('productDetail');
+            container.innerHTML = `
+                <button class="modal-close" onclick="showPage('home')" style="position: absolute; top: 1rem; right: 1rem;">&times;</button>
+                <div class="product-detail-image">📦</div>
+                <div class="product-detail-info">
+                    <h1 style="margin-bottom: 0.5rem;">${product.title}</h1>
+                    <div class="product-detail-price">¥${product.price.toFixed(2)}</div>
+                    <p class="product-detail-desc">${product.desc}</p>
+                    <p style="color: #999; font-size: 0.9rem;">
+                        分类：${product.category} | 卖家：${product.sellerName} | 发布时间：${product.createdAt}
+                    </p>
+                </div>
+                <div class="product-actions">
+                    <button class="btn btn-secondary" onclick="showPage('home')">返回</button>
+                    ${isOwner ? `
+                        <button class="btn btn-danger" onclick="deleteProduct(${product.id})">删除商品</button>
+                    ` : `
+                        <button class="btn ${isFavorited ? 'btn-secondary' : 'btn-primary'}"
+                                onclick="toggleFavorite(${product.id}, this)">
+                            ${isFavorited ? '取消收藏' : '❤️ 收藏'}
+                        </button>
+                        <button class="btn btn-primary" onclick="contactSeller(${product.sellerId})">联系卖家</button>
+                    `}
+                </div>
+            `;
+
+            product.views++;
+            saveProducts(products);
+            showPage('detail');
+        }
+
+        function deleteProduct(productId) {
+            if (!confirm('确定要删除这个商品吗？')) return;
+
+            let products = getProducts();
+            products = products.filter(p => p.id !== productId);
+            saveProducts(products);
+
+            showPage('home');
+            renderProducts();
+        }
+
+        function toggleFavorite(productId, btn) {
+            if (!currentUser) {
+                openModal('loginModal');
+                return;
+            }
+
+            let favorites = getFavorites();
+            const index = favorites.findIndex(f => f.productId === productId && f.userId === currentUser.id);
+
+            if (index > -1) {
+                favorites.splice(index, 1);
+                if (btn) btn.classList.remove('favorited');
+                showAlert('publishAlert', '已取消收藏', 'success');
+            } else {
+                favorites.push({ productId, userId: currentUser.id, createdAt: new Date().toISOString() });
+                if (btn) btn.classList.add('favorited');
+                showAlert('publishAlert', '收藏成功！', 'success');
+            }
+
+            saveFavorites(favorites);
+
+            if (btn && btn.classList.contains('favorite-btn')) {
+                btn.textContent = btn.classList.contains('favorited') ? '❤️' : '🤍';
+            }
+
+            const currentPage = document.querySelector('.page.active')?.id;
+            if (currentPage === 'favorites') {
+                renderFavorites();
+            }
+        }
+
+        function renderFavorites() {
+            if (!currentUser) return;
+
+            const container = document.getElementById('favoritesContainer');
+            const favorites = getFavorites().filter(f => f.userId === currentUser.id);
+            const products = getProducts();
+
+            const favProducts = favorites
+                .map(f => products.find(p => p.id === f.productId))
+                .filter(p => p);
+
+            if (favProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1; background: white;">
+                        <h3>❤️ 还没有收藏</h3>
+                        <p>去首页逛逛吧</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = favProducts.map(p => `
+                <div class="product-card">
+                    <div class="product-image">📦</div>
+                    <div class="product-info">
+                        <h3 class="product-title">${p.title}</h3>
+                        <div class="product-price">¥${p.price.toFixed(2)}</div>
+                        <div class="product-meta">
+                            <span class="product-category">${p.category}</span>
+                            <span>👤 ${p.sellerName}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <button class="btn btn-primary" onclick="showProductDetail(${p.id})">查看详情</button>
+                            <button class="btn btn-danger" onclick="toggleFavorite(${p.id})">取消</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProfile() {
+            if (!currentUser) return;
+
+            const container = document.getElementById('userProfile');
+            const products = getProducts().filter(p => p.sellerId === currentUser.id);
+            const favorites = getFavorites().filter(f => f.userId === currentUser.id);
+
+            container.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-info">
+                        <h2>${currentUser.username}</h2>
+                        <p style="color: #999;">📱 ${currentUser.phone || '未填写'}</p>
+                        <p style="color: #999;">📅 注册于 ${currentUser.createdAt}</p>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${products.length}</div>
+                        <div class="profile-stat-label">发布商品</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">${favorites.length}</div>
+                        <div class="profile-stat-label">收藏商品</div>
+                    </div>
+                </div>
+            `;
+
+            const userProducts = document.getElementById('userProducts');
+            if (products.length === 0) {
+                userProducts.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>📦 还没有发布商品</h3>
+                        <p>快去发布你的第一个商品吧</p>
+                    </div>
+                `;
+            } else {
+                userProducts.innerHTML = products.map(p => `
+                    <div class="product-card">
+                        <div class="product-image">📦</div>
+                        <div class="product-info">
+                            <h3 class="product-title">${p.title}</h3>
+                            <div class="product-price">¥${p.price.toFixed(2)}</div>
+                            <div class="product-meta">
+                                <span class="product-category">${p.category}</span>
+                                <span>浏览 ${p.views}</span>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <button class="btn btn-primary" onclick="showProductDetail(${p.id})">查看</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function contactSeller(sellerId) {
+            const products = getProducts();
+            const seller = products.find(p => p.sellerId === sellerId)?.sellerName || '该用户';
+            alert(`请联系卖家：${seller}\n\n（在实际应用中，这里会打开聊天窗口）`);
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+
+            const page = document.getElementById(pageId + 'Page');
+            if (page) {
+                page.classList.add('active');
+            }
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.textContent.includes(['首页', '发布商品', '我的收藏', '个人主页'][(['home', 'publish', 'favorites', 'profile'].indexOf(pageId))])) {
+                    link.classList.add('active');
+                }
+            });
+
+            if (pageId === 'home') {
+                renderProducts();
+            } else if (pageId === 'favorites') {
+                if (!currentUser) {
+                    openModal('loginModal');
+                } else {
+                    renderFavorites();
+                }
+            } else if (pageId === 'profile') {
+                if (!currentUser) {
+                    openModal('loginModal');
+                } else {
+                    renderProfile();
+                }
+            } else if (pageId === 'publish') {
+                if (!currentUser) {
+                    openModal('loginModal');
+                } else {
+                    populateCategorySelect();
+                }
+            }
+
+            window.scrollTo(0, 0);
+        }
+
+        function populateCategorySelect() {
+            const select = document.getElementById('productCategory');
+            if (!select) return;
+            select.innerHTML = CATEGORIES.filter(c => c !== '全部').map(c =>
+                `<option value="${c}">${c}</option>`
+            ).join('');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function switchToRegister() {
+            closeModal('loginModal');
+            openModal('registerModal');
+        }
+
+        function switchToLogin() {
+            closeModal('registerModal');
+            openModal('loginModal');
+        }
+
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                alert(message);
+                return;
+            }
+            container.innerHTML = `<div class="alert alert-${type}" style="display: block;">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 3000);
+        }
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal') && e.target.classList.contains('active')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
